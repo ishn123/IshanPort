@@ -3,6 +3,8 @@ import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 
 const customAction = createAction("preloader/incrementByAmt");
+
+
 export const fetchQueryBased = createAsyncThunk("preloader/queryBased",async(_,thunkAPI)=>{
     
     let data = await fetch(`https://starpi-portfolio-service.onrender.com/api/cards?filters[Title][$startsWithi]=${_}&populate=*`).then(res=>res.json());
@@ -14,52 +16,53 @@ export const fetchDataStrapi = createAsyncThunk("preloader/getData",
 
     async (_, thunkAPI) => {
 
-        let data = await fetch("https://starpi-portfolio-service.onrender.com/api/cards?populate=*");
-        let recieved = 0;
-        let reader = data.body.getReader({ mode: "byob" });
+        let data = await fetch("https://starpi-portfolio-service.onrender.com/api/cards?populate=*").then(res=>res.json());
+        // let recieved = 0;
+        // let reader = data.body.getReader({ mode: "byob" });
 
-        let flag = true;
-        let chunks = []
-        let buffer = new ArrayBuffer(200);
-        let offset = 0;
-
-        while (flag) {
-
-
-            const { done, value } = await reader.read(new Uint8Array(buffer)).catch((err) => console.log(err));
-
-            let payload = { value: recieved };
-
-            if (done) {
-                flag = false;
-            } else {
-                buffer = new ArrayBuffer(1024);
-                offset += value.byteLength;
-                recieved += value.byteLength;
-                chunks.push(value);
-                thunkAPI.dispatch(customAction(payload));
-            }
+        // let flag = true;
+        // let chunks = []
+        // let buffer = new ArrayBuffer(200);
+        // let offset = 0;
+        // console.log("kkk");
+        // while (flag) {
 
 
+        //     const { done, value } = await reader.read(new Uint8Array(buffer)).catch((err) => console.log(err));
 
-        }
+        //     let payload = { value: recieved };
 
-        let position = 0;
-        let result = new Uint8Array(recieved);
-        // Order the chunks by their respective position
-        for (let chunk of chunks) {
-            result.set(chunk, position);
-            position += chunk.length;
-        }
-        data = JSON.parse(new TextDecoder('utf-8').decode(result));
-        return new Promise((resolve, reject) => {
+        //     if (done) {
+        //         flag = false;
+        //     } else {
+        //         buffer = new ArrayBuffer(1024);
+        //         offset += value.byteLength;
+        //         recieved += value.byteLength;
+        //         chunks.push(value);
+        //         thunkAPI.dispatch(midAction(payload));
+        //     }
 
-            if (data) {
-                resolve(data);
-            } else {
-                reject(data);
-            }
-        })
+
+
+        // }
+
+        // let position = 0;
+        // let result = new Uint8Array(recieved);
+        // // Order the chunks by their respective position
+        // for (let chunk of chunks) {
+        //     result.set(chunk, position);
+        //     position += chunk.length;
+        // }
+        // data = JSON.parse(new TextDecoder('utf-8').decode(result));
+        // return new Promise((resolve, reject) => {
+
+        //     if (data) {
+        //         resolve(data);
+        //     } else {
+        //         reject(data);
+        //     }
+        // })
+        return data;
     }
 )
 
@@ -159,12 +162,13 @@ const dataSlice = createSlice({
             state.data = action.payload;
             state.fdata = [...action.payload.data]
             state.stack = [...state.stack, action.payload.data]
-            // state.loading = false;
+            state.loading = false;
 
         })
         builder.addCase(customAction, (state, action) => {
 
             state.value = action.payload.value;
+            
         })
         builder.addCase(fetchQueryBased.fulfilled,(state,action)=>{
             

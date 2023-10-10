@@ -3,9 +3,13 @@ import { quote } from '../data/data';
 import { useEffect, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { actions } from '../Slices/dataSlice';
+import {useProgress} from "react-redux-progress";
 function Preloader({ store }) {
+ 
+  
   const loader = useSelector(state => state.preloader.loading);
-  const startWidth = useSelector(state => state.preloader.value);
+  const pro = useProgress(loader);
+  
   const {data} = useSelector(state=>state.preloader.data);
   const cardData = useSelector(state=>state.preloader.cards);
   const [size, setsize] = useState(0);
@@ -44,36 +48,37 @@ function Preloader({ store }) {
   useEffect(() => {
     setTimeout(loading, 1000);
   }, []);
-  useEffect(()=>{
-    // console.log("changed",startWidth);
-    // if(startWidth.length >=12){
+  // useEffect(()=>{
+  //   // console.log("changed",startWidth);
+  //   // if(startWidth.length >=12){
 
-    //   for(let val of startWidth){
-    //     console.log("n");
-    //     setsize(val)
-    //   }
-    //   setTimeout(()=>{
-    //   dispatch(actions.updateLoader());
-    //   clearInterval(inte);
-    //   clearInterval(interval);
-    // },12000)
-    // }
-    if(startWidth == 0)return;
-    setsize(startWidth);
-    if(Math.floor((startWidth / 12000) * 100)>=90){
-      dispatch(actions.updateLoader());
-    }
-  },[startWidth])
+  //   //   for(let val of startWidth){
+  //   //     console.log("n");
+  //   //     setsize(val)
+  //   //   }
+  //   //   setTimeout(()=>{
+  //   //   dispatch(actions.updateLoader());
+  //   //   clearInterval(inte);
+  //   //   clearInterval(interval);
+  //   // },12000)
+  //   // }
+  //   console.log(startWidth);
+  //   if(startWidth == 0)return;
+  //   setsize(startWidth);
+  //   if(Math.floor((startWidth / 12000) * 100)>=90){
+  //     dispatch(actions.updateLoader());
+  //   }
+  // },[startWidth])
   return (
     <div className='pre'>
       <div className="loader" onClick={() => seti(Math.floor(Math.random() * 194))}>
         <div className="load"><span id='name' style={{ fontFamily: "General Sans,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif" }}>नमस्ते</span>
         
           <div className="progress">
-            <div className="bar" style={{ width: `${Math.floor((size / 12000) * 100)}%` }}>
+            <div className="bar" style={{ width: `${pro}%` }}>
             </div>
           </div>
-          <span id="percent">{Math.floor((size / 12000) * 100)}%</span>
+          <span id="percent">{Math.floor(pro)}%</span>
         </div>
         <div id='quote'><span id="blc">"{quote[i].text}"</span>
           <span id="author">~{quote[i].author}</span>
