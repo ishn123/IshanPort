@@ -159,6 +159,7 @@ const dataSlice = createSlice({
             state.data = action.payload;
             state.fdata = [...action.payload.data]
             state.stack = [...state.stack, action.payload.data]
+            // state.loading = false;
 
         })
         builder.addCase(customAction, (state, action) => {
